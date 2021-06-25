@@ -1,0 +1,81 @@
+<form [formGroup]="dynamicFormGroup"  (ngSubmit)="submit()">
+  <div *ngFor="let formElement of inputObject">
+    <div [ngSwitch]="formElement.type">
+
+      <div *ngSwitchCase="'text'" style="display: flex; margin-top: 10px;">
+        <div style="width:150px">{{formElement.label}}</div>
+        <div style="width: 200px;">
+          <input id="{{formElement.name}}" type="text" formControlName="{{formElement.name}}"
+          (change)="validate(formElement.name, 'text', formElement.validations)" /> &nbsp;
+          {{errorMessageForText}}
+        </div>
+      </div>
+      
+      <div *ngSwitchCase="'number'" style="display: flex;margin-top: 10px;">
+        <div style="width: 150px;">{{formElement.label}}</div>
+        <div style="width: 200px;">
+          <input type="number" formControlName="{{formElement.name}}" name="{{formElement.name}}"
+          (change)="validate(formElement.name, 'number', formElement.validations)" /> &nbsp;
+          {{errorMessageForNumber}}
+        </div>
+      </div>
+      
+      <div *ngSwitchCase="'date'" style="display: flex;margin-top: 10px;">
+        <div style="width:150px">{{formElement.label}}</div>
+        <div style="width: 200px;">
+          <input type="date" formControlName="{{formElement.name}}" name="{{formElement.name}}" />
+        </div>
+      </div>
+      
+      <div *ngSwitchCase="'select'" style="display: flex;margin-top: 10px;">
+        <div style="width: 150px;">{{formElement.label}}</div>
+
+        <div style="width: 200px;" *ngIf="formElement.dependsOn == null; else subDropDownList">
+          <select formControlName="{{formElement.name}}" name="{{formElement.name}}">
+            <option></option>
+            <option *ngFor="let opt of formElement.options">
+              {{opt}}
+            </option>
+          </select>
+        </div>
+        <ng-template #subDropDownList>
+          <select formControlName="{{formElement.name}}" name="{{formElement.name}}">
+            <option *ngFor="let opt of getData(dynamicFormGroup.get(formElement.dependsOn).value)">
+              {{opt}}
+            </option>
+          </select>
+        </ng-template>
+      </div>
+      
+      <div *ngSwitchCase="'checkbox'" style="display: flex;margin-top: 10px;">
+        <div style="width: 150px;">{{formElement.label}}</div>
+        <div style="width: 200px;">
+          <input type="checkbox" name="{{formElement.name}}" />
+        </div>
+      </div>
+      
+      <div *ngSwitchCase="'radio'" style="display: flex; margin-top: 10px;">
+        <div style="width: 150px;">{{formElement.label}}</div>
+        <div style="width: 200px;">
+          <input type="radio" name="{{formElement.name}}" />
+        </div>
+      </div>
+      
+      <div *ngSwitchCase="'image'" style="display: flex; margin-top: 10px;">
+        <div style="width: 150px;">{{formElement.label}}</div>
+        <div style="width: 200px;">
+          <input type="image" name="{{formElement.name}}" src="../assets/angular_logo_icon.png" height="50"
+            width="50" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+    <input type="submit" title="Submit" >
+  
+ <div>
+   {{output}}
+ </div>
+</form>
+
+<router-outlet></router-outlet>
